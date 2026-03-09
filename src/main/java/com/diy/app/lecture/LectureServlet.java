@@ -1,5 +1,7 @@
 package com.diy.app.lecture;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -30,6 +32,20 @@ public class LectureServlet extends HttpServlet {
         long id = Long.parseLong(pathInfo.substring(1));
 
         lectureService.deleteLecture(id);
+
+        resp.setStatus(HttpServletResponse.SC_OK);
+    }
+
+    /*
+     * 강의 수정하기
+     * */
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Lecture lecture = objectMapper.readValue(req.getReader(), Lecture.class);
+
+        lectureService.updateLecture(lecture);
 
         resp.setStatus(HttpServletResponse.SC_OK);
     }

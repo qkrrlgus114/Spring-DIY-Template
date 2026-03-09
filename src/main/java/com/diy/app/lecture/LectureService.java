@@ -37,6 +37,9 @@ public class LectureService {
         }
     }
 
+    /*
+     * 강의 삭제하기
+     * */
     public void deleteLecture(long id) {
         Lecture lecture = store.get(id);
         if (lecture == null) {
@@ -44,5 +47,18 @@ public class LectureService {
         }
 
         store.remove(id);
+    }
+
+    /*
+     * 강의 수정하기
+     * */
+    public void updateLecture(Lecture lecture) {
+        if (lecture == null || lecture.getId() == null || store.get(lecture.getId()) == null) {
+            throw new IllegalArgumentException("강의가 존재하지 않습니다.");
+        }
+
+        validate(lecture);
+
+        store.put(lecture.getId(), lecture);
     }
 }
