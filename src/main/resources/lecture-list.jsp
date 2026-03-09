@@ -8,11 +8,11 @@
     <title>강의 목록</title>
 </head>
 <body>
-<a href="/lecture-registration.jsp">등록</a>
+<a href="/lecture-registration">등록</a>
 <c:forEach var="lecture" items="${lectures}">
-    <li>id: ${lecture.id}</li>
-    <li>pw: ${lecture.name}</li>
-    <li>pw: ${lecture.price}</li>
+    <li>No: ${lecture.id}</li>
+    <li>강의 이름: ${lecture.name}</li>
+    <li>강의 가격: ${lecture.price}</li>
     <br>
 </c:forEach>
 </body>
