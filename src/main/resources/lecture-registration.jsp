@@ -17,11 +17,11 @@
 </form>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         const registrationForm = document.getElementById("registrationForm");
         const resultDiv = document.getElementById("result");
 
-        registrationForm.addEventListener("submit", function(event) {
+        registrationForm.addEventListener("submit", function (event) {
             event.preventDefault();
 
             const formData = new FormData(registrationForm);
@@ -33,16 +33,15 @@
 
             const jsonData = JSON.stringify(lecture);
 
-            fetch("http://localhost:8080/lectures", {
+            fetch("http://localhost:8080/lecture-registration", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: jsonData
             }).then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url;
-                }
+                alert("강의가 등록되었습니다.")
+                window.location.href = "/lecture-list";
             });
         });
     });

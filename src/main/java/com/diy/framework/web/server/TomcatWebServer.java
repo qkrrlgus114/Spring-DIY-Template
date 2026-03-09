@@ -38,7 +38,7 @@ public class TomcatWebServer {
         final String resourcesPath = Paths.get("src", "main", "resources").toString();
         final String absoluteResourcesPath = new File(resourcesPath).getAbsolutePath();
 
-        final Context context = this.tomcat.addWebapp("", absoluteResourcesPath);
+        final Context context = this.tomcat.addWebapp("/", absoluteResourcesPath);
 
         setServerResources(context);
     }
