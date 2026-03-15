@@ -1,5 +1,9 @@
 package com.diy.framework.web;
 
+import com.diy.app.Lecture;
+import com.diy.app.LectureController;
+import com.diy.app.LectureRepository;
+import com.diy.framework.web.mvc.controller.Controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -24,7 +28,11 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
-        handlerMap.put("GET /lectures", (req, resp) -> resp.getWriter().write("강의 목록 조회"));
+        LectureRepository lectureRepository = new LectureRepository();
+        lectureRepository.save(new Lecture(1L, "이것이 자바다"));
+        lectureRepository.save(new Lecture(2L, "스프링 만들기"));
+
+        handlerMap.put("GET /lectures", new LectureController(lectureRepository));
         handlerMap.put("POST /lectures", (req, resp) -> resp.getWriter().write("강의 등록"));
         handlerMap.put("PUT /lectures", (req, resp) -> resp.getWriter().write("강의 수정"));
         handlerMap.put("DELETE /lectures", (req, resp) -> resp.getWriter().write("강의 삭제"));

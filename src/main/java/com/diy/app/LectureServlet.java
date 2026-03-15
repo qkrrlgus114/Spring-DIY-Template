@@ -1,17 +1,20 @@
 package com.diy.app;
 
-import com.diy.framework.web.JspView;
+import com.diy.framework.web.mvc.view.JspView;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
 
-@WebServlet("/lectures")
+/**
+* Controller 인터페이스 도입으로 미사용
+*/
+@Deprecated
+//@WebServlet("/lectures")
 public class LectureServlet extends HttpServlet {
     LectureRepository lectureRepository = new LectureRepository();
 
