@@ -32,10 +32,11 @@ public class DispatcherServlet extends HttpServlet {
         lectureRepository.save(new Lecture(1L, "이것이 자바다"));
         lectureRepository.save(new Lecture(2L, "스프링 만들기"));
 
-        handlerMap.put("GET /lectures", new LectureController(lectureRepository));
-        handlerMap.put("POST /lectures", (req, resp) -> resp.getWriter().write("강의 등록"));
-        handlerMap.put("PUT /lectures", (req, resp) -> resp.getWriter().write("강의 수정"));
-        handlerMap.put("DELETE /lectures", (req, resp) -> resp.getWriter().write("강의 삭제"));
+        Controller lectureController = new LectureController(lectureRepository);
+        handlerMap.put("GET /lectures", lectureController);
+        handlerMap.put("POST /lectures", lectureController);
+        handlerMap.put("PUT /lectures", lectureController);
+        handlerMap.put("DELETE /lectures", lectureController);
     }
 
     @Override
