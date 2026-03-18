@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>강의 목록</title>
+    <style>body { font-family: sans-serif; }</style>
 </head>
 <body>
     <form method="post" action="/lectures">

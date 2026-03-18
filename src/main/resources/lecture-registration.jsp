@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>강의 등록</title>
+    <style>body { font-family: sans-serif; }</style>
 </head>
 <body>
 <h1>강의 등록</h1>
