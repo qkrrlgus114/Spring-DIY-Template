@@ -2,7 +2,7 @@ package com.diy.app;
 
 import com.diy.framework.web.mvc.Model;
 import com.diy.framework.web.mvc.controller.Controller;
-import com.diy.framework.web.mvc.view.JspView;
+import com.diy.framework.web.mvc.view.ViewResolver;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,9 +11,11 @@ import java.io.IOException;
 
 public class LectureController implements Controller {
     private final LectureRepository lectureRepository;
+    private final ViewResolver viewResolver;
 
-    public LectureController(LectureRepository lectureRepository) {
+    public LectureController(LectureRepository lectureRepository, ViewResolver viewResolver) {
         this.lectureRepository = lectureRepository;
+        this.viewResolver = viewResolver;
     }
 
     @Override
@@ -34,10 +36,10 @@ public class LectureController implements Controller {
         if (request.getRequestURI().contains("/edit")) {
             Long id = Long.valueOf(request.getParameter("id"));
             Model model = new Model().addAttribute("lectures", lectureRepository.findById(id));
-            new JspView("lecture-edit.jsp").render(request, response, model);
+            viewResolver.resolveViewName("lecture-edit").render(request, response, model);
         } else {
             Model model = new Model().addAttribute("lectures", lectureRepository.values());
-            new JspView("lecture-list.jsp").render(request, response, model);
+            viewResolver.resolveViewName("lecture-list").render(request, response, model);
         }
     }
 

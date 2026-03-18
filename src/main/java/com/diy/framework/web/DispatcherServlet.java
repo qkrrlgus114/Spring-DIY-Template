@@ -4,6 +4,8 @@ import com.diy.app.Lecture;
 import com.diy.app.LectureController;
 import com.diy.app.LectureRepository;
 import com.diy.framework.web.mvc.controller.Controller;
+import com.diy.framework.web.mvc.view.JspViewResolver;
+import com.diy.framework.web.mvc.view.ViewResolver;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,11 +30,12 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() {
+        JspViewResolver jspViewResolver = new JspViewResolver();
         LectureRepository lectureRepository = new LectureRepository();
         lectureRepository.save(new Lecture(1L, "이것이 자바다"));
         lectureRepository.save(new Lecture(2L, "스프링 만들기"));
 
-        Controller lectureController = new LectureController(lectureRepository);
+        Controller lectureController = new LectureController(lectureRepository, jspViewResolver);
         handlerMap.put("GET /lectures", lectureController);
         handlerMap.put("POST /lectures", lectureController);
         handlerMap.put("PUT /lectures", lectureController);
