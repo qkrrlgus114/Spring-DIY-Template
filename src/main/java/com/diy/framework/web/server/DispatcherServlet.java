@@ -1,5 +1,6 @@
 package com.diy.framework.web.server;
 
+import com.diy.app.global.Domain;
 import com.diy.app.lecture.LectureServlet;
 
 import javax.servlet.ServletException;
@@ -23,7 +24,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Map<String, HttpServlet> httpServletMap = new HashMap<>();
 
     public DispatcherServlet() {
-        httpServletMap.put("lectures", new LectureServlet());
+        httpServletMap.put(Domain.LECTURES.name(), new LectureServlet());
     }
 
     @Override
@@ -51,7 +52,7 @@ public class DispatcherServlet extends HttpServlet {
             return;
         }
 
-        // 도메인 판단
+        // 도메인에 맞는 서블릿 판단
         HttpServlet httpServlet = httpServletMap.get(splitDomainUrl[1]);
         if (httpServlet == null) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
