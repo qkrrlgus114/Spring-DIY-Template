@@ -3,7 +3,6 @@ package com.diy.app.lecture;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,7 +13,6 @@ import java.util.List;
  * 강의 서블릿
  *
  */
-@WebServlet("/lectures/*")
 public class LectureServlet extends HttpServlet {
 
     private final LectureService lectureService = new LectureService();
@@ -25,7 +23,7 @@ public class LectureServlet extends HttpServlet {
      * */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String pathInfo = req.getPathInfo();
+        String pathInfo = req.getAttribute("pathInfo").toString();
 
         if (pathInfo != null && pathInfo.equals("/register")) {
             req.getRequestDispatcher("/lecture-registration.jsp").forward(req, resp);
@@ -55,7 +53,7 @@ public class LectureServlet extends HttpServlet {
      * */
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String pathInfo = req.getPathInfo();
+        String pathInfo = (String) req.getAttribute("pathInfo");
         if (pathInfo == null || pathInfo.equals("/")) {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;

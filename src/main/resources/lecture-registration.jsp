@@ -33,7 +33,7 @@
 
             const jsonData = JSON.stringify(lecture);
 
-            fetch("http://localhost:8080/lecture-registration", {
+            fetch("/lectures", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -41,7 +41,7 @@
                 body: jsonData
             }).then(response => {
                 alert("강의가 등록되었습니다.")
-                window.location.href = "/lecture-list";
+                window.location.href = "/lectures";
             });
         });
     });

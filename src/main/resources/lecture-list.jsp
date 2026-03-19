@@ -8,7 +8,7 @@
     <title>강의 목록</title>
 </head>
 <body>
-<a href="/lecture-registration">등록</a>
+<a href="/lectures/register">등록</a>
 <c:forEach var="lecture" items="${lectures}">
     <div id="view-${lecture.id}">
         <li>No: ${lecture.id}</li>
