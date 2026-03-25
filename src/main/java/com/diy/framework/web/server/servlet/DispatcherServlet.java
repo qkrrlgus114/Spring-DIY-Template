@@ -4,6 +4,8 @@ import com.diy.app.lecture.LectureController;
 import com.diy.app.lecture.LectureService;
 import com.diy.framework.web.server.controller.Controller;
 import com.diy.framework.web.server.model.Model;
+import com.diy.framework.web.server.view.View;
+import com.diy.framework.web.server.view.ViewResolver;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -55,7 +57,13 @@ public class DispatcherServlet extends HttpServlet {
 
         Model model = new Model();
         try {
-            controller.handleRequest(req, resp, model);
+            String viewName = controller.handleRequest(req, resp, model);
+            ViewResolver viewResolver = new ViewResolver();
+
+            View view = viewResolver.resolveViewName(viewName);
+            if (view != null) {
+                view.render(req, resp, model);
+            }
         } catch (Exception e) {
             throw new ServletException(e);
         }

@@ -10,5 +10,5 @@ import javax.servlet.http.HttpServletResponse;
  * */
 @FunctionalInterface
 public interface Controller {
-    void handleRequest(final HttpServletRequest request, final HttpServletResponse response, Model model) throws Exception;
+    String handleRequest(final HttpServletRequest request, final HttpServletResponse response, Model model) throws Exception;
 }

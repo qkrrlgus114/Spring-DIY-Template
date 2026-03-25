@@ -2,8 +2,6 @@ package com.diy.app.lecture;
 
 import com.diy.framework.web.server.controller.Controller;
 import com.diy.framework.web.server.model.Model;
-import com.diy.framework.web.server.view.JspView;
-import com.diy.framework.web.server.view.View;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,62 +18,61 @@ public class LectureController implements Controller {
     }
 
     @Override
-    public void handleRequest(HttpServletRequest req, HttpServletResponse res, Model model) throws Exception {
+    public String handleRequest(HttpServletRequest req, HttpServletResponse res, Model model) throws Exception {
         String method = req.getMethod();
         String pathInfo = req.getAttribute("pathInfo").toString();
 
         switch (method) {
             case "GET":
-                doGet(req, res, pathInfo, model);
-                break;
+                return doGet(req, res, pathInfo, model);
             case "POST":
-                doPost(req, res);
-                break;
+                return doPost(req, res);
             case "PUT":
-                doPut(req, res);
-                break;
+                return doPut(req, res);
             case "DELETE":
-                doDelete(req, res, pathInfo);
-                break;
+                return doDelete(req, res, pathInfo);
             default:
                 res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                return null;
         }
     }
 
-    private void doGet(HttpServletRequest req, HttpServletResponse res, String pathInfo, Model model) throws Exception {
+    private String doGet(HttpServletRequest req, HttpServletResponse res, String pathInfo, Model model) throws Exception {
         if ("/register".equals(pathInfo)) {
-            View view = new JspView("/lecture-registration.jsp");
-            view.render(req, res, model);
-            return;
-
+            return "lecture-registration.jsp";
         }
 
         List<Lecture> lectures = lectureService.findAllLecture();
         model.setData("lectures", lectures);
-        View view = new JspView("/lecture-list.jsp");
-        view.render(req, res, model);
+        return "lecture-list.jsp";
     }
 
-    private void doPost(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    private String doPost(HttpServletRequest req, HttpServletResponse res) throws Exception {
         Lecture lecture = objectMapper.readValue(req.getReader(), Lecture.class);
         lectureService.register(lecture);
         res.setStatus(HttpServletResponse.SC_OK);
+
+        return null;
     }
 
-    private void doPut(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    private String doPut(HttpServletRequest req, HttpServletResponse res) throws Exception {
         Lecture lecture = objectMapper.readValue(req.getReader(), Lecture.class);
         lectureService.updateLecture(lecture);
         res.setStatus(HttpServletResponse.SC_OK);
+
+        return null;
     }
 
-    private void doDelete(HttpServletRequest req, HttpServletResponse res, String pathInfo) throws Exception {
+    private String doDelete(HttpServletRequest req, HttpServletResponse res, String pathInfo) throws Exception {
         if (pathInfo == null || "/".equals(pathInfo)) {
             res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+            return null;
         }
 
         long id = Long.parseLong(pathInfo.substring(1));
         lectureService.deleteLecture(id);
         res.setStatus(HttpServletResponse.SC_OK);
+
+        return null;
     }
 }
