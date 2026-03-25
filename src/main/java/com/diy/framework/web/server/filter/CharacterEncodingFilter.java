@@ -1,4 +1,4 @@
-package com.diy.framework.web.server;
+package com.diy.framework.web.server.filter;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;

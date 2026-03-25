@@ -1,8 +1,9 @@
 package com.diy.app.lecture;
 
-import com.diy.framework.web.server.Controller;
-import com.diy.framework.web.server.HtmlView;
-import com.diy.framework.web.server.JspView;
+import com.diy.framework.web.server.controller.Controller;
+import com.diy.framework.web.server.model.Model;
+import com.diy.framework.web.server.view.JspView;
+import com.diy.framework.web.server.view.View;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,13 +20,13 @@ public class LectureController implements Controller {
     }
 
     @Override
-    public void handleRequest(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public void handleRequest(HttpServletRequest req, HttpServletResponse res, Model model) throws Exception {
         String method = req.getMethod();
         String pathInfo = req.getAttribute("pathInfo").toString();
 
         switch (method) {
             case "GET":
-                doGet(req, res, pathInfo);
+                doGet(req, res, pathInfo, model);
                 break;
             case "POST":
                 doPost(req, res);
@@ -41,21 +42,18 @@ public class LectureController implements Controller {
         }
     }
 
-    private void doGet(HttpServletRequest req, HttpServletResponse res, String pathInfo) throws Exception {
+    private void doGet(HttpServletRequest req, HttpServletResponse res, String pathInfo, Model model) throws Exception {
         if ("/register".equals(pathInfo)) {
-//            JspView jspView = new JspView("/lecture-registration.jsp");
-//            jspView.render(req, res);
-
-            HtmlView htmlView = new HtmlView("/lecture-registration.jsp");
-            htmlView.render(req, res);
+            View view = new JspView("/lecture-registration.jsp");
+            view.render(req, res, model);
             return;
 
         }
 
         List<Lecture> lectures = lectureService.findAllLecture();
-        req.setAttribute("lectures", lectures);
-        JspView jspView = new JspView("/lecture-list.jsp");
-        jspView.render(req, res);
+        model.setData("lectures", lectures);
+        View view = new JspView("/lecture-list.jsp");
+        view.render(req, res, model);
     }
 
     private void doPost(HttpServletRequest req, HttpServletResponse res) throws Exception {

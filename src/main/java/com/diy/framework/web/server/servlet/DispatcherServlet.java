@@ -1,7 +1,9 @@
-package com.diy.framework.web.server;
+package com.diy.framework.web.server.servlet;
 
 import com.diy.app.lecture.LectureController;
 import com.diy.app.lecture.LectureService;
+import com.diy.framework.web.server.controller.Controller;
+import com.diy.framework.web.server.model.Model;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -51,8 +53,9 @@ public class DispatcherServlet extends HttpServlet {
         }
         req.setAttribute("pathInfo", pathInfo);
 
+        Model model = new Model();
         try {
-            controller.handleRequest(req, resp);
+            controller.handleRequest(req, resp, model);
         } catch (Exception e) {
             throw new ServletException(e);
         }
