@@ -1,6 +1,6 @@
 package com.diy.framework.web.server.controller;
 
-import com.diy.framework.web.server.model.Model;
+import com.diy.framework.web.server.model.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,5 +10,5 @@ import javax.servlet.http.HttpServletResponse;
  * */
 @FunctionalInterface
 public interface Controller {
-    String handleRequest(final HttpServletRequest request, final HttpServletResponse response, Model model) throws Exception;
+    ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception;
 }

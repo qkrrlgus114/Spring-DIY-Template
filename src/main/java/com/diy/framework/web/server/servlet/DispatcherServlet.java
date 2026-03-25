@@ -3,7 +3,7 @@ package com.diy.framework.web.server.servlet;
 import com.diy.app.lecture.LectureController;
 import com.diy.app.lecture.LectureService;
 import com.diy.framework.web.server.controller.Controller;
-import com.diy.framework.web.server.model.Model;
+import com.diy.framework.web.server.model.ModelAndView;
 import com.diy.framework.web.server.view.View;
 import com.diy.framework.web.server.view.ViewResolver;
 
@@ -26,6 +26,7 @@ import java.util.Map;
 public class DispatcherServlet extends HttpServlet {
 
     private static final Map<String, Controller> httpServletMap = new HashMap<>();
+    private final ViewResolver viewResolver = new ViewResolver();
 
     public DispatcherServlet() {
         httpServletMap.put("lectures", new LectureController(new LectureService()));
@@ -55,18 +56,27 @@ public class DispatcherServlet extends HttpServlet {
         }
         req.setAttribute("pathInfo", pathInfo);
 
-        Model model = new Model();
         try {
-            String viewName = controller.handleRequest(req, resp, model);
-            ViewResolver viewResolver = new ViewResolver();
-
-            View view = viewResolver.resolveViewName(viewName);
-            if (view != null) {
-                view.render(req, resp, model);
-            }
+            ModelAndView mav = controller.handleRequest(req, resp);
+            render(mav, req, resp);
         } catch (Exception e) {
             throw new ServletException(e);
         }
+    }
+
+    private void render(final ModelAndView mav, final HttpServletRequest req, final HttpServletResponse resp) throws Exception {
+        if (mav == null) {
+            return;
+        }
+
+        final String viewName = mav.getViewName();
+        final View view = viewResolver.resolveViewName(viewName);
+
+        if (view == null) {
+            throw new ServletException("View not found: " + viewName);
+        }
+
+        view.render(mav.getModel(), req, resp);
     }
 
 }

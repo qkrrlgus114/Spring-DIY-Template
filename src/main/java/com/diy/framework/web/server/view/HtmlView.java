@@ -1,13 +1,12 @@
 package com.diy.framework.web.server.view;
 
 
-import com.diy.framework.web.server.model.Model;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 public class HtmlView implements View {
     private final String viewName;
@@ -16,7 +15,7 @@ public class HtmlView implements View {
         this.viewName = viewName;
     }
 
-    public void render(final HttpServletRequest req, final HttpServletResponse res, Model model) throws IOException {
+    public void render(final Map<String, Object> model, final HttpServletRequest req, final HttpServletResponse res) throws IOException {
         final String viewFile = readViewFile(req);
 
         res.setContentType("text/html;charset=utf-8");
