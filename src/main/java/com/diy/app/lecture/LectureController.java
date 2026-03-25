@@ -1,6 +1,8 @@
 package com.diy.app.lecture;
 
 import com.diy.framework.web.server.Controller;
+import com.diy.framework.web.server.HtmlView;
+import com.diy.framework.web.server.JspView;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,13 +43,19 @@ public class LectureController implements Controller {
 
     private void doGet(HttpServletRequest req, HttpServletResponse res, String pathInfo) throws Exception {
         if ("/register".equals(pathInfo)) {
-            req.getRequestDispatcher("/lecture-registration.jsp").forward(req, res);
+//            JspView jspView = new JspView("/lecture-registration.jsp");
+//            jspView.render(req, res);
+
+            HtmlView htmlView = new HtmlView("/lecture-registration.jsp");
+            htmlView.render(req, res);
             return;
+
         }
 
         List<Lecture> lectures = lectureService.findAllLecture();
         req.setAttribute("lectures", lectures);
-        req.getRequestDispatcher("/lecture-list.jsp").forward(req, res);
+        JspView jspView = new JspView("/lecture-list.jsp");
+        jspView.render(req, res);
     }
 
     private void doPost(HttpServletRequest req, HttpServletResponse res) throws Exception {
