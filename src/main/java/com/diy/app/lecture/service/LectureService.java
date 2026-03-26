@@ -1,10 +1,12 @@
 package com.diy.app.lecture.service;
 
 import com.diy.app.lecture.model.Lecture;
+import com.diy.framework.web.server.bean.Component;
 import com.diy.framework.web.server.repository.Repository;
 
 import java.util.List;
 
+@Component
 public class LectureService {
 
     private final Repository<Lecture> lectureRepository;

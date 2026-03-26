@@ -27,6 +27,7 @@ public class TomcatWebServer {
         try {
             tomcat.setPort(port);
             tomcat.start();
+
             final Thread awaitThread = new Thread(() -> tomcat.getServer().await());
             awaitThread.start();
         } catch (LifecycleException e) {
