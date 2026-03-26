@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -47,4 +48,20 @@ public class ReflectionTest {
         }
     }
 
+    @Test
+    void privateFieldAccess() throws Exception {
+        Class<Car> carClass = Car.class;
+        Car car = carClass.getDeclaredConstructor().newInstance();
+
+        Field name = carClass.getDeclaredField("name");
+        Field price = carClass.getDeclaredField("price");
+        name.setAccessible(true);
+        price.setAccessible(true);
+
+        name.set(car, "Lia's Car Ver.2");
+        price.set(car, 10000);
+
+        log.debug(car.testGetName());
+        log.debug(car.testGetPrice());
+    }
 }
