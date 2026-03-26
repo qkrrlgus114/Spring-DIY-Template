@@ -15,6 +15,10 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+    // 로깅
+    implementation("org.slf4j:slf4j-api:2.0.9")
+    implementation("ch.qos.logback:logback-classic:1.4.14")
+
     // ObjectMapper
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.3")
 
