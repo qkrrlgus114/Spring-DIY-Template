@@ -1,4 +1,4 @@
-package com.diy.app.lecture;
+package com.diy.app.lecture.model;
 
 public class Lecture {
 

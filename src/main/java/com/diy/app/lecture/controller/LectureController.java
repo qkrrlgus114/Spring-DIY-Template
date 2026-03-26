@@ -1,5 +1,7 @@
-package com.diy.app.lecture;
+package com.diy.app.lecture.controller;
 
+import com.diy.app.lecture.model.Lecture;
+import com.diy.app.lecture.service.LectureService;
 import com.diy.framework.web.server.controller.Controller;
 import com.diy.framework.web.server.model.ModelAndView;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,8 +62,9 @@ public class LectureController implements Controller {
     private ModelAndView doPut(HttpServletRequest req, HttpServletResponse res) throws Exception {
         Lecture lecture = objectMapper.readValue(req.getReader(), Lecture.class);
         lectureService.updateLecture(lecture);
+        res.setStatus(HttpServletResponse.SC_OK);
 
-        return new ModelAndView("redirect:/lectures");
+        return null;
     }
 
     private ModelAndView doDelete(HttpServletRequest req, HttpServletResponse res, String pathInfo) throws Exception {
@@ -72,7 +75,8 @@ public class LectureController implements Controller {
 
         long id = Long.parseLong(pathInfo.substring(1));
         lectureService.deleteLecture(id);
+        res.setStatus(HttpServletResponse.SC_OK);
 
-        return new ModelAndView("redirect:/lectures");
+        return null;
     }
 }

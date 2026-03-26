@@ -1,7 +1,8 @@
 package com.diy.framework.web.server.servlet;
 
-import com.diy.app.lecture.LectureController;
-import com.diy.app.lecture.LectureService;
+import com.diy.app.lecture.controller.LectureController;
+import com.diy.app.lecture.repository.LectureRepository;
+import com.diy.app.lecture.service.LectureService;
 import com.diy.framework.web.server.controller.Controller;
 import com.diy.framework.web.server.model.ModelAndView;
 import com.diy.framework.web.server.view.View;
@@ -29,7 +30,7 @@ public class DispatcherServlet extends HttpServlet {
     private final ViewResolver viewResolver = new ViewResolver();
 
     public DispatcherServlet() {
-        httpServletMap.put("lectures", new LectureController(new LectureService()));
+        httpServletMap.put("lectures", new LectureController(new LectureService(new LectureRepository())));
     }
 
     @Override

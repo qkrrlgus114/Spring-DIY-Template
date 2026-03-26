@@ -1,13 +1,17 @@
 package com.diy.app.lecture.service;
 
 import com.diy.app.lecture.model.Lecture;
-import com.diy.app.lecture.repository.LectureRepository;
+import com.diy.framework.web.server.repository.Repository;
 
 import java.util.List;
 
 public class LectureService {
 
-    private final LectureRepository lectureRepository = new LectureRepository();
+    private final Repository<Lecture> lectureRepository;
+
+    public LectureService(Repository<Lecture> lectureRepository) {
+        this.lectureRepository = lectureRepository;
+    }
 
     /*
      * 모든 강의 리스트 조회
