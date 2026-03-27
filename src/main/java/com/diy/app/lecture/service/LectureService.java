@@ -1,6 +1,7 @@
 package com.diy.app.lecture.service;
 
 import com.diy.app.lecture.model.Lecture;
+import com.diy.framework.web.server.bean.Autowired;
 import com.diy.framework.web.server.bean.Component;
 import com.diy.framework.web.server.repository.Repository;
 
@@ -11,13 +12,14 @@ public class LectureService {
 
     private final Repository<Lecture> lectureRepository;
 
+    @Autowired
     public LectureService(Repository<Lecture> lectureRepository) {
         this.lectureRepository = lectureRepository;
     }
-
     /*
      * 모든 강의 리스트 조회
      * */
+
     public List<Lecture> findAllLecture() {
         return lectureRepository.findAll();
     }

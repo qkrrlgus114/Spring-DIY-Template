@@ -1,8 +1,8 @@
 package com.diy.app;
 
 import com.diy.framework.web.server.TomcatWebServer;
-import com.diy.framework.web.server.bean.BeanScanner;
-import com.diy.framework.web.server.bean.Component;
+import com.diy.framework.web.server.bean.BeanFactory;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Handler;
@@ -13,10 +13,18 @@ import java.util.logging.Logger;
  *
  */
 public class Main {
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) {
         configureJulConsoleEncoding();
-        BeanScanner beanScanner = new BeanScanner("com.diy");
-        beanScanner.scanClassesTypeAnnotatedWith(Component.class);
+
+        BeanFactory beanFactory = new BeanFactory();
+        try {
+            beanFactory.start();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return;
+        }
 
         TomcatWebServer tomcatWebServer = new TomcatWebServer();
         tomcatWebServer.start();
