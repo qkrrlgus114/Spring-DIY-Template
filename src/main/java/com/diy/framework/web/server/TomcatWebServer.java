@@ -1,6 +1,8 @@
 package com.diy.framework.web.server;
 
+import com.diy.framework.web.DispatcherServlet;
 import org.apache.catalina.Context;
+import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.webresources.DirResourceSet;
@@ -16,19 +18,22 @@ public class TomcatWebServer {
 
     private final Tomcat tomcat = new Tomcat();
     private final int port = 8080;
+    private final DispatcherServlet dispatcherServlet;
+
+    public TomcatWebServer(DispatcherServlet dispatcherServlet) {
+        this.dispatcherServlet = dispatcherServlet;
+    }
 
     public void start() {
         setServerContext();
-        startDaemonAwaitThread();
         startServerInternal();
+        startDaemonAwaitThread();
     }
 
     public void startServerInternal() {
         try {
             tomcat.setPort(port);
             tomcat.start();
-            final Thread awaitThread = new Thread(() -> tomcat.getServer().await());
-            awaitThread.start();
         } catch (LifecycleException e) {
             throw new RuntimeException("톰켓 서버 실행 중 예외가 발생했습니다.", e);
         }
@@ -39,6 +44,15 @@ public class TomcatWebServer {
         final String absoluteResourcesPath = new File(resourcesPath).getAbsolutePath();
 
         final Context context = this.tomcat.addWebapp("/", absoluteResourcesPath);
+
+        // addWebapp의 기본 서블릿 초기화 후 "/" 매핑을 dispatcher로 교체
+        context.addLifecycleListener(event -> {
+            if (Lifecycle.CONFIGURE_START_EVENT.equals(event.getType())) {
+                context.removeServletMapping("/");
+                Tomcat.addServlet(context, "dispatcher", dispatcherServlet);
+                context.addServletMappingDecoded("/", "dispatcher");
+            }
+        });
 
         setServerResources(context);
     }

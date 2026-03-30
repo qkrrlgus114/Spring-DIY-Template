@@ -1,10 +1,13 @@
 package com.diy.app;
 
+import com.diy.framework.context.Component;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class LectureRepository {
     private final Map<Long, Lecture> lectures = new HashMap<>();
 

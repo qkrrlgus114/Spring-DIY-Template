@@ -1,5 +1,7 @@
 package com.diy.app;
 
+import com.diy.framework.context.Autowired;
+import com.diy.framework.context.Component;
 import com.diy.framework.web.mvc.Model;
 import com.diy.framework.web.mvc.ModelAndView;
 import com.diy.framework.web.mvc.controller.Controller;
@@ -9,9 +11,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Component
 public class LectureController implements Controller {
     private final LectureRepository lectureRepository;
 
+    @Autowired
     public LectureController(LectureRepository lectureRepository) {
         this.lectureRepository = lectureRepository;
     }

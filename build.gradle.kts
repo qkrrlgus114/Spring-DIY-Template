@@ -27,6 +27,13 @@ dependencies {
     implementation("org.apache.tomcat.embed:tomcat-embed-jasper:8.5.42")
 
     implementation(kotlin("stdlib-jdk8"))
+
+    // 로깅
+    implementation("org.slf4j:slf4j-api:2.0.16")
+    testImplementation("ch.qos.logback:logback-classic:1.5.18")
+
+    // 리플렉션 의존성 주입
+    implementation("org.reflections:reflections:0.10.2")
 }
 
 tasks.test {
