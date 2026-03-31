@@ -2,18 +2,16 @@ package com.diy.framework.web;
 
 import com.diy.framework.web.mvc.ModelAndView;
 import com.diy.framework.web.mvc.controller.Controller;
+import com.diy.framework.web.mvc.controller.HandlerMapping;
 import com.diy.framework.web.mvc.view.JspViewResolver;
 import com.diy.framework.web.mvc.view.ViewResolver;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Front Controller 역할
@@ -21,54 +19,42 @@ import java.util.Map;
  */
 public class DispatcherServlet extends HttpServlet {
 
-    private final Map<String, Controller> handlerMap;
+    private HandlerMapping handlerMapping;
     private final ViewResolver viewResolver = new JspViewResolver();
 
-    public DispatcherServlet(Map<String, Controller> handlerMap) {
-        this.handlerMap = handlerMap;
+    @Override
+    public void init() throws ServletException {
+        this.handlerMapping = new HandlerMapping();
     }
 
     @Override
     protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
 
-        // 한글 인코딩
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
-        resp.setContentType("application/json; charset=UTF-8");
+        Object handler = handlerMapping.getHandler(req);
 
-        String method = req.getMethod();
-        if ("POST".equals(method)) {
-            String override = req.getParameter("_method");
-            if (override != null) method = override.toUpperCase();
-        }
-        String key = method + " " + req.getRequestURI();
-        Controller controller = handlerMap.get(key);
-
-        if (controller == null) {
+        if (handler == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
-        // 렌더링의 역할을 Servlet 에게 처리하도록 Controller 로 부터 분리
-        try {
-            ModelAndView modelAndView = controller.handleRequest(req, resp);
-            if (modelAndView != null) {
-                viewResolver.resolveViewName(modelAndView.getViewName()).render(req, resp, modelAndView.getModel());
-            }
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
+        execute(handler, req, resp);
     }
 
-    private Map<String, ?> parseParams(final HttpServletRequest req) throws IOException {
-        if ("application/json".equals(req.getHeader("Content-Type"))) {
-            final byte[] bodyBytes = req.getInputStream().readAllBytes();
-            final String body = new String(bodyBytes, StandardCharsets.UTF_8);
+    private void execute(Object handler, HttpServletRequest req, HttpServletResponse resp) throws ServletException, UnsupportedEncodingException {
+        if (handler instanceof Controller) {
+            // 한글 인코딩
+            req.setCharacterEncoding("UTF-8");
+            resp.setCharacterEncoding("UTF-8");
+            resp.setContentType("application/json; charset=UTF-8");
 
-            return new ObjectMapper().readValue(body, new TypeReference<Map<String, Object>>() {
-            });
-        } else {
-            return req.getParameterMap();
+            try {
+                ModelAndView modelAndView = ((Controller) handler).handleRequest(req, resp);
+                if (modelAndView != null) {
+                    viewResolver.resolveViewName(modelAndView.getViewName()).render(req, resp, modelAndView.getModel());
+                }
+            } catch (Exception e) {
+                throw new ServletException(e);
+            }
         }
     }
 }
