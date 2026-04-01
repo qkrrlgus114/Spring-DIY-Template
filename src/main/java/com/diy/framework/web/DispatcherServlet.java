@@ -1,5 +1,6 @@
 package com.diy.framework.web;
 
+import com.diy.framework.web.beans.factory.BeanFactory;
 import com.diy.framework.web.mvc.ModelAndView;
 import com.diy.framework.web.mvc.controller.Controller;
 import com.diy.framework.web.mvc.controller.HandlerMapping;
@@ -24,12 +25,18 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        this.handlerMapping = new HandlerMapping();
+        try {
+            BeanFactory beanFactory = new BeanFactory("com.diy");
+
+            this.handlerMapping = new HandlerMapping();
+            handlerMapping.initialize(beanFactory.getBeans());
+        } catch (Exception e) {
+            throw new ServletException("Framework Initialization Failed.", e);
+        }
     }
 
     @Override
     protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-
         Object handler = handlerMapping.getHandler(req);
 
         if (handler == null) {
