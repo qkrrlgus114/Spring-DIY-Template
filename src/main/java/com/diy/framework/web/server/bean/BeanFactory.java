@@ -24,6 +24,7 @@ public class BeanFactory {
 
     public void start() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         BeanScanner beanScanner = new BeanScanner("com.diy");
+
         classes = beanScanner.scanClassesTypeAnnotatedWith(Component.class);
         for (Class<?> clazz : classes) {
             createBean(clazz);
@@ -32,7 +33,7 @@ public class BeanFactory {
     }
 
     // 오토와이어드 붙은 생성자 찾기
-    private Constructor<?> findConstructor(Class<?> clazz) throws NoSuchMethodException {
+    private Constructor<?> findAutowiredAnnotationConstructor(Class<?> clazz) throws NoSuchMethodException {
         Constructor<?>[] constructors = clazz.getDeclaredConstructors();
         for (Constructor<?> constructor : constructors) {
             if (constructor.isAnnotationPresent(Autowired.class)) {
@@ -48,8 +49,8 @@ public class BeanFactory {
             return store.get(clazz);
         }
 
-        Constructor<?> constructor = findConstructor(clazz);
-        Class<?>[] parameterTypes = constructor.getParameterTypes();
+        Constructor<?> autowiredAnnotationConstructor = findAutowiredAnnotationConstructor(clazz);
+        Class<?>[] parameterTypes = autowiredAnnotationConstructor.getParameterTypes();
 
         // 기본 생성자다
         if (parameterTypes.length == 0) {
