@@ -19,14 +19,13 @@ public class TomcatWebServer {
 
     private final Tomcat tomcat = new Tomcat();
     private final int port = 8080;
-    private final DispatcherServlet dispatcherServlet;
 
-    public TomcatWebServer(DispatcherServlet dispatcherServlet) {
-        this.dispatcherServlet = dispatcherServlet;
+    public TomcatWebServer() {
     }
 
     public void start() {
-        setServerContext();
+        DispatcherServlet dispatcherServlet = new DispatcherServlet();
+        setServerContext(dispatcherServlet);
         startServerInternal();
         startDaemonAwaitThread();
     }
@@ -40,7 +39,7 @@ public class TomcatWebServer {
         }
     }
 
-    private void setServerContext() {
+    private void setServerContext(DispatcherServlet dispatcherServlet) {
         final String resourcesPath = Paths.get("src", "main", "resources").toString();
         final String absoluteResourcesPath = new File(resourcesPath).getAbsolutePath();
 

@@ -1,6 +1,5 @@
 package com.diy.app;
 
-import com.diy.framework.web.DispatcherServlet;
 import com.diy.framework.web.server.TomcatWebServer;
 
 /*
@@ -11,8 +10,7 @@ import com.diy.framework.web.server.TomcatWebServer;
  */
 public class Main {
     public static void main(String[] args) {
-        DispatcherServlet dispatcherServlet = new DispatcherServlet();
-        TomcatWebServer tomcatWebServer = new TomcatWebServer(dispatcherServlet);
+        TomcatWebServer tomcatWebServer = new TomcatWebServer();
         tomcatWebServer.start();
     }
 }
