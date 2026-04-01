@@ -43,8 +43,8 @@ public class BeanFactory {
         return clazz.getDeclaredConstructor();
     }
 
+    // 빈 생성 메서드
     private Object createBean(Class<?> clazz) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        // 이미 store에 있다!!! 그러면 이미 등록된 빈이래요~
         if (store.containsKey(clazz)) {
             return store.get(clazz);
         }
@@ -52,33 +52,46 @@ public class BeanFactory {
         Constructor<?> autowiredAnnotationConstructor = findAutowiredAnnotationConstructor(clazz);
         Class<?>[] parameterTypes = autowiredAnnotationConstructor.getParameterTypes();
 
-        // 기본 생성자다
+        // 기본 생성자가 있으면 바로 리턴
         if (parameterTypes.length == 0) {
-            Object instance = constructor.newInstance();
-            store.put(clazz, instance);
-            return instance;
+            return saveBean(autowiredAnnotationConstructor, clazz, null);
         }
 
-        // 파라미터 있다~?(재귀를 태워라~)
+        Object[] params = resolveConstructorArguments(parameterTypes);
+
+        return saveBean(autowiredAnnotationConstructor, clazz, params);
+    }
+
+    // 파라미터 타입의 빈 조회
+    private Object[] resolveConstructorArguments(Class<?>[] parameterTypes) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         Object[] params = new Object[parameterTypes.length];
         for (int i = 0; i < parameterTypes.length; i++) {
-            Class<?> parameterType = parameterTypes[i];
-            // 인터페이스면!!!!!!!!!!
-            if (parameterType.isInterface()) {
-                for (Class<?> candidate : classes) {
-                    for (Class<?> iface : candidate.getInterfaces()) {
-                        if (iface == parameterType) {
-                            params[i] = createBean(candidate);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                params[i] = createBean(parameterTypes[i]);
-            }
+            params[i] = resolveDependency(parameterTypes[i]);
         }
 
-        Object instance = constructor.newInstance(params);
+        return params;
+    }
+
+    private Object resolveDependency(Class<?> parameterType) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        if (!parameterType.isInterface()) {
+            return createBean(parameterType);
+        }
+
+        for (Class<?> candidate : classes) {
+            if (parameterType.isAssignableFrom(candidate)) {
+                return createBean(candidate);
+            }
+        }
+        throw new IllegalArgumentException("구현체를 찾을 수 없습니다: " + parameterType.getName());
+    }
+
+    private Object saveBean(Constructor<?> constructor, Class<?> clazz, Object[] params) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+        Object instance;
+        if (params == null) {
+            instance = constructor.newInstance();
+        } else {
+            instance = constructor.newInstance(params);
+        }
         store.put(clazz, instance);
         return instance;
     }
