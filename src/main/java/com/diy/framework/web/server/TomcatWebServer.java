@@ -4,6 +4,7 @@ import com.diy.framework.web.DispatcherServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.loader.WebappLoader;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
@@ -44,6 +45,11 @@ public class TomcatWebServer {
         final String absoluteResourcesPath = new File(resourcesPath).getAbsolutePath();
 
         final Context context = this.tomcat.addWebapp("/", absoluteResourcesPath);
+
+        // 임베디드 환경에서는 부모 클래스로더에 위임하여 클래스 중복 로딩 방지
+        WebappLoader loader = new WebappLoader(this.getClass().getClassLoader());
+        loader.setDelegate(true);
+        context.setLoader(loader);
 
         // addWebapp의 기본 서블릿 초기화 후 "/" 매핑을 dispatcher로 교체
         context.addLifecycleListener(event -> {

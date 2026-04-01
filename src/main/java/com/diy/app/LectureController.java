@@ -2,6 +2,7 @@ package com.diy.app;
 
 import com.diy.framework.context.Autowired;
 import com.diy.framework.context.Component;
+import com.diy.framework.context.RequestMapping;
 import com.diy.framework.web.mvc.Model;
 import com.diy.framework.web.mvc.ModelAndView;
 import com.diy.framework.web.mvc.controller.Controller;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
+@RequestMapping("/lectures")
 public class LectureController implements Controller {
     private final LectureService lectureService;
 
