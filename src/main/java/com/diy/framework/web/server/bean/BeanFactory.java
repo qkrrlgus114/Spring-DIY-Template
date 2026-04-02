@@ -1,13 +1,9 @@
 package com.diy.framework.web.server.bean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
  * 빈 관련된 모든 것을 담아두겠다. 하하
@@ -17,19 +13,34 @@ import java.util.Set;
  */
 public class BeanFactory {
 
-    private static final Logger log = LoggerFactory.getLogger(BeanFactory.class);
-    private Set<Class<?>> classes;
+    private List<BeanRecipe> recipes;
 
     private final Map<Class<?>, Object> store = new HashMap<>();
 
     public void start() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         BeanScanner beanScanner = new BeanScanner("com.diy");
+        // 빈 등록 대상 전체 수집
+        recipes = collectAllBean(beanScanner);
 
-        classes = beanScanner.scanClassesTypeAnnotatedWith(Component.class);
-        for (Class<?> clazz : classes) {
-            createBean(clazz);
+        // 빈 등록
+        registerBean();
+    }
+
+    private void registerBean() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        for (BeanRecipe recipe : recipes) {
+            if (!store.containsKey(recipe.getType())) {
+                // @Autowired(Component) 있는 애들은 createBean으로 다 조회해서 등록
+                if (recipe instanceof ComponentBeanRecipe) {
+                    Object instance = createBean(recipe.getType());
+                    store.put(recipe.getType(), instance);
+                }
+                // @Bean 애들은 create해서 바로 등록
+                else {
+                    Object instance = recipe.create();
+                    store.put(recipe.getType(), instance);
+                }
+            }
         }
-
     }
 
     // 오토와이어드 붙은 생성자 찾기
@@ -77,9 +88,9 @@ public class BeanFactory {
             return createBean(parameterType);
         }
 
-        for (Class<?> candidate : classes) {
-            if (parameterType.isAssignableFrom(candidate)) {
-                return createBean(candidate);
+        for (BeanRecipe recipe : recipes) {
+            if (parameterType.isAssignableFrom(recipe.getType())) {
+                return createBean(recipe.getType());
             }
         }
         throw new IllegalArgumentException("구현체를 찾을 수 없습니다: " + parameterType.getName());
@@ -94,5 +105,29 @@ public class BeanFactory {
         }
         store.put(clazz, instance);
         return instance;
+    }
+
+    private List<BeanRecipe> collectAllBean(BeanScanner beanScanner) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        List<BeanRecipe> beanRecipeList = new ArrayList<>();
+
+        // Component 어노테이션 수집
+        Set<Class<?>> componentClasses = beanScanner.scanClassesTypeAnnotatedWith(Component.class);
+        for (Class<?> clazz : componentClasses) {
+            beanRecipeList.add(new ComponentBeanRecipe(clazz));
+        }
+
+        // Configuration 어노테이션 수집
+        Set<Class<?>> configClasses = beanScanner.scanClassesTypeAnnotatedWith(Configuration.class);
+        for (Class<?> configClass : configClasses) {
+            for (Method method : configClass.getDeclaredMethods()) {
+                // Bean이 있는 메서드만 찾는다.
+                if (method.isAnnotationPresent(Bean.class)) {
+                    Object object = configClass.getDeclaredConstructor().newInstance();
+                    beanRecipeList.add(new ConfigurationBeanRecipe(object, method));
+                }
+            }
+        }
+
+        return beanRecipeList;
     }
 }
