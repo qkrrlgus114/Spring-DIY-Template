@@ -6,10 +6,17 @@ public class ConfigurationBeanRecipe implements BeanRecipe {
 
     private final Object configInstance;
     private final Method method;
+    private final String name;
 
     public ConfigurationBeanRecipe(Object configInstance, Method method) {
         this.configInstance = configInstance;
         this.method = method;
+        this.name = method.getAnnotation(Bean.class).value();
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override

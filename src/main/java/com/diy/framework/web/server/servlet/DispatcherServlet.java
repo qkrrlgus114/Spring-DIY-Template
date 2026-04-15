@@ -1,15 +1,12 @@
 package com.diy.framework.web.server.servlet;
 
-import com.diy.app.lecture.controller.LectureController;
-import com.diy.app.lecture.repository.LectureRepository;
-import com.diy.app.lecture.service.LectureService;
+import com.diy.framework.web.server.bean.BeanFactory;
 import com.diy.framework.web.server.controller.Controller;
 import com.diy.framework.web.server.model.ModelAndView;
 import com.diy.framework.web.server.view.View;
 import com.diy.framework.web.server.view.ViewResolver;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,14 +20,19 @@ import java.util.Map;
  * 따라서 각 요청에 따라 적절한 Servlet으로 분배를 시켜줘야 한다.
  *
  */
-@WebServlet("/")
 public class DispatcherServlet extends HttpServlet {
 
-    private static final Map<String, Controller> httpServletMap = new HashMap<>();
+    private final Map<String, Controller> httpServletMap = new HashMap<>();
     private final ViewResolver viewResolver = new ViewResolver();
+    private final BeanFactory beanFactory;
 
-    public DispatcherServlet() {
-        httpServletMap.put("lectures", new LectureController(new LectureService(new LectureRepository())));
+    public DispatcherServlet(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
+    }
+
+    @Override
+    public void init() {
+        httpServletMap.putAll(beanFactory.getBeansOfType(Controller.class));
     }
 
     @Override
@@ -81,4 +83,3 @@ public class DispatcherServlet extends HttpServlet {
     }
 
 }
-

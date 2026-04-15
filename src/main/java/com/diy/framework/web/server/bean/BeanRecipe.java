@@ -6,6 +6,8 @@ package com.diy.framework.web.server.bean;
  * 이 인터페이스를 이용해 빈 등록을 추상화시키려고 한다.
  */
 public interface BeanRecipe {
+    String getName();
+
     Class<?> getType();
 
     Object create();

@@ -2,8 +2,6 @@ package com.diy.app.lecture.controller;
 
 import com.diy.app.lecture.model.Lecture;
 import com.diy.app.lecture.service.LectureService;
-import com.diy.framework.web.server.bean.Autowired;
-import com.diy.framework.web.server.bean.Component;
 import com.diy.framework.web.server.controller.Controller;
 import com.diy.framework.web.server.model.ModelAndView;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,13 +12,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
 public class LectureController implements Controller {
 
     private final LectureService lectureService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
     public LectureController(LectureService lectureService) {
         this.lectureService = lectureService;
     }

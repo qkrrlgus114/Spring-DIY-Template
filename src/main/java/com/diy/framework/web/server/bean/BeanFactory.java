@@ -15,7 +15,7 @@ public class BeanFactory {
 
     private List<BeanRecipe> recipes;
 
-    private final Map<Class<?>, Object> store = new HashMap<>();
+    private final Map<String, Object> store = new HashMap<>();
 
     public void start() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         BeanScanner beanScanner = new BeanScanner("com.diy");
@@ -26,21 +26,53 @@ public class BeanFactory {
         registerBean();
     }
 
-    private void registerBean() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        for (BeanRecipe recipe : recipes) {
-            if (!store.containsKey(recipe.getType())) {
-                // @Autowired(Component) 있는 애들은 createBean으로 다 조회해서 등록
-                if (recipe instanceof ComponentBeanRecipe) {
-                    Object instance = createBean(recipe.getType());
-                    store.put(recipe.getType(), instance);
-                }
-                // @Bean 애들은 create해서 바로 등록
-                else {
-                    Object instance = recipe.create();
-                    store.put(recipe.getType(), instance);
-                }
+    public Object getBean(String name) {
+        return store.get(name);
+    }
+
+    public <T> Map<String, T> getBeansOfType(Class<T> type) {
+        Map<String, T> result = new HashMap<>();
+        for (Map.Entry<String, Object> e : store.entrySet()) {
+            if (type.isAssignableFrom(e.getValue().getClass())) {
+                result.put(e.getKey(), type.cast(e.getValue()));
             }
         }
+        return result;
+    }
+
+    private void registerBean() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        for (BeanRecipe recipe : recipes) {
+            if (!store.containsKey(recipe.getName())) {
+                createBean(recipe);
+            }
+        }
+    }
+
+    // 레시피 기반으로 빈 생성
+    private Object createBean(BeanRecipe recipe) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        if (store.containsKey(recipe.getName())) {
+            return store.get(recipe.getName());
+        }
+
+        Object instance;
+        if (recipe instanceof ComponentBeanRecipe) {
+            Class<?> clazz = recipe.getType();
+            Constructor<?> constructor = findAutowiredAnnotationConstructor(clazz);
+            Class<?>[] parameterTypes = constructor.getParameterTypes();
+
+            if (parameterTypes.length == 0) {
+                instance = constructor.newInstance();
+            } else {
+                Object[] params = resolveConstructorArguments(parameterTypes);
+                instance = constructor.newInstance(params);
+            }
+        } else {
+            // @Bean 메서드는 그대로 호출
+            instance = recipe.create();
+        }
+
+        store.put(recipe.getName(), instance);
+        return instance;
     }
 
     // 오토와이어드 붙은 생성자 찾기
@@ -54,25 +86,6 @@ public class BeanFactory {
         return clazz.getDeclaredConstructor();
     }
 
-    // 빈 생성 메서드
-    private Object createBean(Class<?> clazz) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        if (store.containsKey(clazz)) {
-            return store.get(clazz);
-        }
-
-        Constructor<?> autowiredAnnotationConstructor = findAutowiredAnnotationConstructor(clazz);
-        Class<?>[] parameterTypes = autowiredAnnotationConstructor.getParameterTypes();
-
-        // 기본 생성자가 있으면 바로 리턴
-        if (parameterTypes.length == 0) {
-            return saveBean(autowiredAnnotationConstructor, clazz, null);
-        }
-
-        Object[] params = resolveConstructorArguments(parameterTypes);
-
-        return saveBean(autowiredAnnotationConstructor, clazz, params);
-    }
-
     // 파라미터 타입의 빈 조회
     private Object[] resolveConstructorArguments(Class<?>[] parameterTypes) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         Object[] params = new Object[parameterTypes.length];
@@ -84,27 +97,19 @@ public class BeanFactory {
     }
 
     private Object resolveDependency(Class<?> parameterType) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-        if (!parameterType.isInterface()) {
-            return createBean(parameterType);
+        // 이미 생성된 빈 중에서 먼저 찾고
+        for (Object bean : store.values()) {
+            if (parameterType.isAssignableFrom(bean.getClass())) {
+                return bean;
+            }
         }
-
+        // 없으면 레시피에서 찾아 생성
         for (BeanRecipe recipe : recipes) {
             if (parameterType.isAssignableFrom(recipe.getType())) {
-                return createBean(recipe.getType());
+                return createBean(recipe);
             }
         }
         throw new IllegalArgumentException("구현체를 찾을 수 없습니다: " + parameterType.getName());
-    }
-
-    private Object saveBean(Constructor<?> constructor, Class<?> clazz, Object[] params) throws InvocationTargetException, InstantiationException, IllegalAccessException {
-        Object instance;
-        if (params == null) {
-            instance = constructor.newInstance();
-        } else {
-            instance = constructor.newInstance(params);
-        }
-        store.put(clazz, instance);
-        return instance;
     }
 
     private List<BeanRecipe> collectAllBean(BeanScanner beanScanner) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {

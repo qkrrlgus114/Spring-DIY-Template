@@ -27,7 +27,7 @@ public class Main {
         }
 
         TomcatWebServer tomcatWebServer = new TomcatWebServer();
-        tomcatWebServer.start();
+        tomcatWebServer.start(beanFactory);
 
     }
 
