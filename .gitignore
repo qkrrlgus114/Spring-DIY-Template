@@ -45,3 +45,9 @@ bin/
 
 ### OMC ###
 .omc/
+
+### Claude Code ###
+.claude/
+
+### Embedded Tomcat ###
+tomcat.8080/
