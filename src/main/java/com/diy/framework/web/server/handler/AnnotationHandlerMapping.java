@@ -1,9 +1,9 @@
 package com.diy.framework.web.server.handler;
 
 import com.diy.framework.web.server.bean.BeanFactory;
-import com.diy.framework.web.server.bean.Controller;
-import com.diy.framework.web.server.bean.RequestMapping;
-import com.diy.framework.web.server.bean.RequestMethod;
+import com.diy.framework.web.server.mvc.annotation.Controller;
+import com.diy.framework.web.server.mvc.annotation.RequestMapping;
+import com.diy.framework.web.server.mvc.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;

@@ -1,5 +1,10 @@
 package com.diy.framework.web.server.bean;
 
+import com.diy.framework.web.server.bean.annotation.Autowired;
+import com.diy.framework.web.server.bean.annotation.Bean;
+import com.diy.framework.web.server.bean.annotation.Component;
+import com.diy.framework.web.server.bean.annotation.Configuration;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

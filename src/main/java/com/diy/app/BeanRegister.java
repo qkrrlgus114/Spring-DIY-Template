@@ -1,6 +1,6 @@
 package com.diy.app;
 
-import com.diy.framework.web.server.bean.Configuration;
+import com.diy.framework.web.server.bean.annotation.Configuration;
 
 @Configuration
 public class BeanRegister {

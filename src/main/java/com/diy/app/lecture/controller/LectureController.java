@@ -2,10 +2,10 @@ package com.diy.app.lecture.controller;
 
 import com.diy.app.lecture.model.Lecture;
 import com.diy.app.lecture.service.LectureService;
-import com.diy.framework.web.server.bean.Autowired;
-import com.diy.framework.web.server.bean.Controller;
-import com.diy.framework.web.server.bean.RequestMapping;
-import com.diy.framework.web.server.bean.RequestMethod;
+import com.diy.framework.web.server.bean.annotation.Autowired;
+import com.diy.framework.web.server.mvc.annotation.Controller;
+import com.diy.framework.web.server.mvc.annotation.RequestMapping;
+import com.diy.framework.web.server.mvc.annotation.RequestMethod;
 import com.diy.framework.web.server.model.ModelAndView;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

@@ -1,7 +1,7 @@
 package com.diy.app.lecture.repository;
 
 import com.diy.app.lecture.model.Lecture;
-import com.diy.framework.web.server.bean.Component;
+import com.diy.framework.web.server.bean.annotation.Component;
 import com.diy.framework.web.server.repository.Repository;
 
 import java.util.ArrayList;

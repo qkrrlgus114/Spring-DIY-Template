@@ -1,5 +1,7 @@
 package com.diy.framework.web.server.bean;
 
+import com.diy.framework.web.server.bean.annotation.Bean;
+
 import java.lang.reflect.Method;
 
 public class ConfigurationBeanRecipe implements BeanRecipe {
