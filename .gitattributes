@@ -1,0 +1,39 @@
+# 기본: 모든 텍스트 파일은 LF로 저장, 자동 감지
+* text=auto eol=lf
+
+# 소스 코드
+*.java   text eol=lf
+*.kt     text eol=lf
+*.kts    text eol=lf
+*.groovy text eol=lf
+*.xml    text eol=lf
+*.properties text eol=lf
+*.yml    text eol=lf
+*.yaml   text eol=lf
+*.json   text eol=lf
+*.md     text eol=lf
+*.jsp    text eol=lf
+*.html   text eol=lf
+*.css    text eol=lf
+*.js     text eol=lf
+
+# 쉘 스크립트는 반드시 LF
+*.sh     text eol=lf
+gradlew  text eol=lf
+
+# Windows 배치 파일은 CRLF
+*.bat    text eol=crlf
+*.cmd    text eol=crlf
+
+# 바이너리
+*.jar    binary
+*.war    binary
+*.class  binary
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.ico    binary
+*.pdf    binary
+*.zip    binary
+*.gz     binary
