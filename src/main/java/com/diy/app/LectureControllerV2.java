@@ -1,26 +1,27 @@
 package com.diy.app;
 
 import com.diy.framework.context.Autowired;
-import com.diy.framework.context.Component;
+import com.diy.framework.context.Controller;
+import com.diy.framework.context.RequestMapping;
+import com.diy.framework.context.RequestMethod;
 import com.diy.framework.web.mvc.Model;
 import com.diy.framework.web.mvc.ModelAndView;
-import com.diy.framework.web.mvc.controller.Controller;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Component
-public class LectureController implements Controller {
+@Controller
+public class LectureControllerV2 {
     private final LectureService lectureService;
 
     @Autowired
-    public LectureController(LectureService lectureService) {
+    public LectureControllerV2(LectureService lectureService) {
         this.lectureService = lectureService;
     }
 
-    @Override
+    @RequestMapping(value = "/v2/lectures", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String method = request.getMethod();
         String override = request.getParameter("_method");
