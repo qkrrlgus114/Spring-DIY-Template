@@ -1,5 +1,6 @@
 package com.diy.framework.web;
 
+import com.diy.framework.context.HandlerMethod;
 import com.diy.framework.web.beans.factory.BeanFactory;
 import com.diy.framework.web.mvc.ModelAndView;
 import com.diy.framework.web.mvc.controller.HandlerMapping;
@@ -13,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.util.Map;
 
 /**
  * Front Controller 역할
@@ -55,11 +55,9 @@ public class DispatcherServlet extends HttpServlet {
             resp.setCharacterEncoding("UTF-8");
             resp.setContentType("application/json; charset=UTF-8");
 
-            if (handler instanceof Map<?, ?> handlerMap) {
-                Map.Entry<Object, Method> entry = ((Map<Object, Method>) handlerMap).entrySet().iterator().next();
-
-                Object controller = entry.getKey();
-                Method method = entry.getValue();
+            if (handler instanceof HandlerMethod handlerMap) {
+                Object controller = ((HandlerMethod) handler).getBean();
+                Method method = ((HandlerMethod) handler).getMethod();
 
                 // Reflection 으로 메서드 실행
                 Object result = method.invoke(controller, req, resp);

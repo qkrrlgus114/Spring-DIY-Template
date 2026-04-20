@@ -1,5 +1,6 @@
 package com.diy.framework.web.mvc.controller;
 
+import com.diy.framework.context.HandlerMethod;
 import com.diy.framework.context.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,7 +10,7 @@ import java.util.Map;
 
 public class HandlerMapping {
 
-    private final Map<String, Map<Object, Method>> mapper = new HashMap<>();
+    private final Map<String, HandlerMethod> mapper = new HashMap<>();
 
     public HandlerMapping() {
     }
@@ -31,7 +32,7 @@ public class HandlerMapping {
                     RequestMapping mapping = method.getAnnotation(RequestMapping.class);
                     String url = baseUrl + mapping.value();
 
-                    mapper.put(url, Map.of(bean, method));
+                    mapper.put(url, new HandlerMethod(bean, method));
                     System.out.println("[HandlerMapping] " + url + " -> " + beanClass.getSimpleName() + "." + method.getName());
                 }
             }
