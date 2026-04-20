@@ -5,7 +5,7 @@ import com.diy.framework.context.RequestMapping;
 import com.diy.framework.context.RequestMethod;
 import com.diy.framework.web.mvc.Model;
 import com.diy.framework.web.mvc.ModelAndView;
-import com.diy.framework.web.mvc.controller.Controller;
+import com.diy.framework.context.Controller;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

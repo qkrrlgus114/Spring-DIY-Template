@@ -1,14 +1,11 @@
 package com.diy.framework.web.mvc.controller;
 
-import com.diy.framework.context.Component;
+import com.diy.framework.web.mvc.ModelAndView;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Component
-public @interface Controller {
+@FunctionalInterface
+public interface Controller {
+    ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception;
 }

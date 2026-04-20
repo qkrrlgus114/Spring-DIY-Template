@@ -2,7 +2,6 @@ package com.diy.framework.web;
 
 import com.diy.framework.web.beans.factory.BeanFactory;
 import com.diy.framework.web.mvc.ModelAndView;
-import com.diy.framework.web.mvc.controller.Controller;
 import com.diy.framework.web.mvc.controller.HandlerMapping;
 import com.diy.framework.web.mvc.view.JspViewResolver;
 import com.diy.framework.web.mvc.view.ViewResolver;
