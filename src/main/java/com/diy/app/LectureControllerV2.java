@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Controller
+@RequestMapping(value = "/v2/lectures")
 public class LectureControllerV2 {
     private final LectureService lectureService;
 
@@ -21,39 +22,28 @@ public class LectureControllerV2 {
         this.lectureService = lectureService;
     }
 
-    @RequestMapping(value = "/v2/lectures", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
-    public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String method = request.getMethod();
-        String override = request.getParameter("_method");
-        if (override != null) method = override.toUpperCase();
-
-        return switch (method) {
-            case "GET" -> handleGet(request, response);
-            case "POST" -> handlePost(request, response);
-            case "PUT" -> handlePut(request, response);
-            case "DELETE" -> handleDelete(request, response);
-            default -> throw new IllegalStateException("Unexpected value: " + method);
-        };
+    @RequestMapping(value = "", methods = RequestMethod.GET)
+    public ModelAndView list(HttpServletRequest request, HttpServletResponse response) {
+        Model model = new Model().addAttribute("lectures", lectureService.getLectures());
+        return new ModelAndView("lecture-list", model);
     }
 
-    private ModelAndView handleGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getRequestURI().contains("/edit")) {
-            Long id = Long.valueOf(request.getParameter("id"));
-            Model model = new Model().addAttribute("lecture", lectureService.getLecture(id));
-            return new ModelAndView("lecture-edit", model);
-        } else {
-            Model model = new Model().addAttribute("lectures", lectureService.getLectures());
-            return new ModelAndView("lecture-list", model);
-        }
+    @RequestMapping(value = "/edit", methods = RequestMethod.GET)
+    public ModelAndView edit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Long id = Long.valueOf(request.getParameter("id"));
+        Model model = new Model().addAttribute("lecture", lectureService.getLecture(id));
+        return new ModelAndView("lecture-edit", model);
     }
 
-    private ModelAndView handlePost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @RequestMapping(value = "", methods = RequestMethod.POST)
+    public ModelAndView save(HttpServletRequest request, HttpServletResponse response) {
         String title = request.getParameter("title");
         lectureService.saveLecture(title);
         return new ModelAndView("redirect:/lectures", new Model());
     }
 
-    private ModelAndView handlePut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @RequestMapping(value = "", methods = RequestMethod.PUT)
+    public ModelAndView update(HttpServletRequest request, HttpServletResponse response) {
         Long id = Long.valueOf(request.getParameter("id"));
         String title = request.getParameter("title");
         Lecture lecture = lectureService.getLecture(id);
@@ -62,7 +52,8 @@ public class LectureControllerV2 {
         return new ModelAndView("redirect:/lectures", new Model());
     }
 
-    private ModelAndView handleDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @RequestMapping(value = "", methods = RequestMethod.DELETE)
+    public ModelAndView delete(HttpServletRequest request, HttpServletResponse response) {
         Long id = Long.valueOf(request.getParameter("id"));
         lectureService.deleteLecture(id);
         return new ModelAndView("redirect:/lectures", new Model());
