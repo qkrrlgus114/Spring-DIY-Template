@@ -9,10 +9,10 @@
 </head>
 <body>
 <h1>강의 등록</h1>
-<form method="post" action="/lectures">
+<form method="post" action="/v1/lectures">
     <label>제목: <input type="text" name="title" required></label>
     <button type="submit">등록</button>
 </form>
-<a href="/lectures">목록으로</a>
+<a href="/v1/lectures">목록으로</a>
 </body>
 </html>

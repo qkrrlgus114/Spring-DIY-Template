@@ -9,7 +9,7 @@
 </head>
 <body>
 <h1>강의 수정</h1>
-    <form method="post" action="/lectures">
+    <form method="post" action="/v1/lectures">
         <input type="hidden" name="_method" value="PUT">
         <input type="hidden" name="id" value="${lecture.id}">
         <input type="text" name="title" value="${lecture.title}">

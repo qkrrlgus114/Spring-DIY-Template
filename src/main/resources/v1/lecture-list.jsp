@@ -19,8 +19,8 @@
         <ul>
             <c:forEach var="lecture" items="${lectures}">
                 <li>${lecture.id} - ${lecture.title}
-                    <a href="/lectures/edit?id=${lecture.id}">수정</a>
-                    <form method="post" action="/lectures" style="display:inline">
+                    <a href="/v1/lectures/edit?id=${lecture.id}">수정</a>
+                    <form method="post" action="/v1/lectures" style="display:inline">
                         <input type="hidden" name="_method" value="DELETE">
                         <input type="hidden" name="id" value="${lecture.id}">
                         <button type="submit">삭제</button>
@@ -30,6 +30,6 @@
         </ul>
     </c:otherwise>
 </c:choose>
-<button onclick="location.href='/lecture-registration.jsp'">등록</button>
+<button onclick="location.href='/v1/lecture-registration.jsp'">등록</button>
 </body>
 </html>

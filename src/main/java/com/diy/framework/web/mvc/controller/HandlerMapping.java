@@ -1,14 +1,18 @@
 package com.diy.framework.web.mvc.controller;
 
+import com.diy.framework.context.HandlerMethod;
 import com.diy.framework.context.RequestMapping;
+import com.diy.framework.context.RequestMappingInfo;
+import com.diy.framework.context.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HandlerMapping {
 
-    private final Map<String, Controller> mapper = new HashMap<>();
+    private final Map<RequestMappingInfo, HandlerMethod> mapper = new HashMap<>();
 
     public HandlerMapping() {
     }
@@ -17,13 +21,24 @@ public class HandlerMapping {
         for (Object bean : beans.values()) {
             Class<?> beanClass = bean.getClass();
 
+            // 1. 클래스 레벨의 @RequestMapping 스캔
+            String baseUrl = "";
             if (beanClass.isAnnotationPresent(RequestMapping.class)) {
-                RequestMapping requestMapping = beanClass.getAnnotation(RequestMapping.class);
-                String url = requestMapping.value();
+                baseUrl = beanClass.getAnnotation(RequestMapping.class).value();
+            }
 
-                if (bean instanceof Controller controller) {
-                    mapper.put(url, controller);
-                    System.out.println("[HandlerMapping] " + url + " -> " + beanClass.getSimpleName());
+            // 2. 메서드 레벨의 @RequestMapping 스캔
+            for (Method method : beanClass.getDeclaredMethods()) {
+                if (method.isAnnotationPresent(RequestMapping.class)) {
+                    RequestMapping mapping = method.getAnnotation(RequestMapping.class);
+                    String url = baseUrl + mapping.value();
+
+                    RequestMethod[] methods = mapping.methods();
+                    for (RequestMethod requestMethod : methods) {
+                        RequestMappingInfo requestInfo = new RequestMappingInfo(url, requestMethod);
+                        mapper.put(requestInfo, new HandlerMethod(bean, method));
+                        System.out.println("[HandlerMapping] " + requestInfo + " -> " + beanClass.getSimpleName() + "." + method.getName());
+                    }
                 }
             }
         }
@@ -31,17 +46,8 @@ public class HandlerMapping {
 
     public Object getHandler(HttpServletRequest request) {
         String uri = request.getRequestURI();
-
-        // 정확히 일치하는 url 우선
-        if (mapper.containsKey(uri)) {
-            return mapper.get(uri);
-        }
-
-        // prefix 일치하는 url 리턴
-        return mapper.entrySet().stream()
-                .filter(entry -> uri.startsWith(entry.getKey()))
-                .map(Map.Entry::getValue)
-                .findFirst()
-                .orElse(null);
+        RequestMethod method = RequestMethod.valueOf(request.getMethod());
+        RequestMappingInfo requestInfo = new RequestMappingInfo(uri, method);
+        return mapper.get(requestInfo);
     }
 }

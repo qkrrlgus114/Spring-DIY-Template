@@ -2,7 +2,6 @@ package com.diy.app;
 
 import com.diy.framework.context.Autowired;
 import com.diy.framework.context.Component;
-import com.diy.framework.context.RequestMapping;
 import com.diy.framework.web.mvc.Model;
 import com.diy.framework.web.mvc.ModelAndView;
 import com.diy.framework.web.mvc.controller.Controller;
@@ -13,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-@RequestMapping("/lectures")
 public class LectureController implements Controller {
     private final LectureService lectureService;
 
@@ -41,10 +39,10 @@ public class LectureController implements Controller {
         if (request.getRequestURI().contains("/edit")) {
             Long id = Long.valueOf(request.getParameter("id"));
             Model model = new Model().addAttribute("lecture", lectureService.getLecture(id));
-            return new ModelAndView("lecture-edit", model);
+            return new ModelAndView("v1/lecture-edit", model);
         } else {
             Model model = new Model().addAttribute("lectures", lectureService.getLectures());
-            return new ModelAndView("lecture-list", model);
+            return new ModelAndView("v1/lecture-list", model);
         }
     }
 
