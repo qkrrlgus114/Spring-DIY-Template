@@ -1,9 +1,11 @@
 package com.diy.framework.web;
 
 import com.diy.framework.context.HandlerMethod;
+import com.diy.framework.context.RestController;
 import com.diy.framework.web.beans.factory.BeanFactory;
 import com.diy.framework.web.mvc.ModelAndView;
 import com.diy.framework.web.mvc.controller.HandlerMapping;
+import com.diy.framework.web.mvc.json.JsonResponseWriter;
 import com.diy.framework.web.mvc.view.JspViewResolver;
 import com.diy.framework.web.mvc.view.ViewResolver;
 
@@ -23,6 +25,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private HandlerMapping handlerMapping;
     private final ViewResolver viewResolver = new JspViewResolver();
+    private final JsonResponseWriter jsonResponseWriter = new JsonResponseWriter();
 
     @Override
     public void init() throws ServletException {
@@ -57,11 +60,15 @@ public class DispatcherServlet extends HttpServlet {
 
             if (handler instanceof HandlerMethod handlerMap) {
                 Object controller = ((HandlerMethod) handler).getBean();
+                Class<?> controllerClass = controller.getClass();
                 Method method = ((HandlerMethod) handler).getMethod();
 
                 // Reflection 으로 메서드 실행
                 Object result = method.invoke(controller, req, resp);
-                if (result instanceof ModelAndView modelAndView) {
+
+                if (controllerClass.isAnnotationPresent(RestController.class)) {
+                    jsonResponseWriter.write(resp, result);
+                } else if (result instanceof ModelAndView modelAndView) {
                     viewResolver.resolveViewName(modelAndView.getViewName()).render(req, resp, modelAndView.getModel());
                 }
             }
